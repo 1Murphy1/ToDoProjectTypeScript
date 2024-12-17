@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteTask, updateTask, reorderTasks } from './redux/taskSlice';
+import { deleteTask, updateTask, reorderTasks, pinTask, unpinTask, } from './redux/taskSlice';
 import TaskForm from './taskForm';
 import TodoItem from './ToDoItem';
 import EditModal from './editModal';
@@ -12,6 +12,7 @@ interface Task {
     id: string;
     title: string;
     about: string;
+    isPinned?: boolean;
 }
 
 const TodoList: React.FC = () => {
@@ -65,15 +66,25 @@ const TodoList: React.FC = () => {
         updatedTasks.splice(index, 0, draggedTask);
         dispatch(reorderTasks(updatedTasks));
     };
+    const handleTogglePinTask = (task: Task) => {
+        if (task.isPinned) {
+          dispatch(unpinTask(task));
+        } else {
+          dispatch(pinTask(task));
+        }
+      };
+      const sortedTasks = [...tasks].sort((a, b) => {
+        return (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
+      });
 
     return (
         <div className="createTaskContainer">
             <TaskForm title={title} setTitle={setTitle} about={about} setAbout={setAbout} />
             <div className="task-list">
-                {tasks.length === 0 ? (
+                {sortedTasks.length === 0 ? (
                     <p className="task-list-none">No tasks</p>
                 ) : (
-                    tasks.map((task: Task, index: number) => (
+                    sortedTasks.map((task: Task, index: number) => (
                         <div
                             key={task.id}
                             className="taskContainer"
@@ -88,6 +99,10 @@ const TodoList: React.FC = () => {
                                 onDelete={handleDeleteTask}
                                 onEdit={handleEditTask}
                                 onShare={() => setShareModalOpen(true)}
+                                pinTask={() => handleTogglePinTask(task)}
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, index)}
                             />
                         </div>
                     ))

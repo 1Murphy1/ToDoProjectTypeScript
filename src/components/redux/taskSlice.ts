@@ -5,6 +5,7 @@ interface Task {
     id: string;
     title: string;
     about: string;
+    isPinned?: boolean;
 }
 
 type TaskState = Task[];
@@ -37,9 +38,26 @@ const taskSlice = createSlice({
         reorderTasks: (state, action: PayloadAction<TaskState>) => {
             return action.payload;
         },
+        pinTask: (state, action: PayloadAction<Task>) => {
+            const task = state.find((task) => task.id === action.payload.id);
+            if (task && !task.isPinned) {
+              const pinnedTasksCount = state.filter((task) => task.isPinned).length;
+              if (pinnedTasksCount < 3) {
+                task.isPinned = true;
+              } else {
+                console.log(task.title + ": закреплено максимум задач");
+              }
+            }
+          },
+          unpinTask: (state, action: PayloadAction<{ id: string }>) => {
+            const task = state.find((task) => task.id === action.payload.id);
+            if (task) {
+              task.isPinned = false;
+            }
+          },
     },
 });
 
-export const { addTask, deleteTask, updateTask, reorderTasks } = taskSlice.actions;
+export const { addTask, deleteTask, updateTask, reorderTasks, pinTask, unpinTask, } = taskSlice.actions;
 
 export default taskSlice.reducer;

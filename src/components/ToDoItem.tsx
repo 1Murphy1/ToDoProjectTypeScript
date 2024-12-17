@@ -4,6 +4,7 @@ interface Task {
     id: string;
     title: string;
     about: string;
+    isPinned?: boolean;
 }
 
 interface TodoItemProps {
@@ -14,9 +15,10 @@ interface TodoItemProps {
     onDragStart: (task: Task) => void;
     onDrop: (event: React.DragEvent<HTMLDivElement>, task: Task) => void;
     onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+    pinTask: (task: Task) => void;
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({ task, onDelete, onEdit, onShare, onDragStart, onDrop, onDragOver }) => {
+const TodoItem: React.FC<TodoItemProps> = ({ task, onDelete, onEdit, onShare, onDragStart, onDrop, onDragOver, pinTask}) => {
     const [isActionPanelVisible, setActionPanelVisible] = useState(false);
 
     return (
@@ -67,6 +69,17 @@ const TodoItem: React.FC<TodoItemProps> = ({ task, onDelete, onEdit, onShare, on
                             }}
                         >
                             <img src="../src/icons/editButton.svg" alt="Edit" />
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                pinTask(task);
+                            }}
+                            style={{
+                                backgroundColor: task.isPinned ? "#FF8303" : "transparent",
+                                display:'flex',
+                            }}
+                        >   <img src="../src/icons/heart.svg" width="40" height="40" />                        
                         </button>
                     </div>
                 </div>

@@ -102,15 +102,14 @@ button {
   display: flex;
 }
 .taskContainer .task-action-panel-buttons {
-  width: 124px;
-  height: 36px;
-  gap: 7px;
+  height: 40px;
+  gap: 10px;
   display: flex;
   margin-top: 8px;
 }
 .taskContainer .task-action-panel-buttons button {
-  width: 36px;
-  height: 36px;
+  min-width: 40px;
+  height: 40px;
   font-size: 20px;
 }
 
